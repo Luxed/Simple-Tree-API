@@ -184,17 +184,19 @@ class Tree {
 
     public click(func: any, tabClick?: TreeNode[]) {
         if (typeof func === 'function') {
+            console.log('click');
             if (typeof tabClick === 'undefined') {
                 tabClick = this._tabTree;
             }
+
             let i;
             let l = tabClick.length;
             for (i = 0; i < l; i++) {
-                if (tabClick[i].child === null) {
-                    document.getElementById(this._strDOMElement).onclick = func;
-                } else {
+                let str = tabClick[i].path;
+                if (tabClick[i].child !== null) {
                     this.click(func, tabClick[i].child);
                 }
+                document.getElementById(tabClick[i].path).onclick = function(){func(str)};
             }
         }
     }
@@ -215,7 +217,7 @@ class Tree {
         }
     }
 
-    public test() {
-        console.log('what you did works');
+    public test(str) {
+        console.log('what you did works ' + str);
     }
 }
