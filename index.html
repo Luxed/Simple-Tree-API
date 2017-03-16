@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style type="text/css" media="screen">
-        #tree{
-            position: absolute; float: left; padding-left: 5px;
+        #tree, #tree2{
+            /*position: absolute; float: left; padding-left: 5px;*/
             cursor: default;
             /*background-color: rgb(39,40,34);*/
             line-height: 150%; white-space: nowrap;
@@ -30,26 +30,31 @@
 <body>
 
 <div id="tree"></div>
-
+<br /><br />
+<div id="tree2"></div>
 </body>
 
 <script src="tree.js"></script>
 <script>
     // Creating a Tree with a string
-    var treeStr = new Tree('d;test/:d;test2/:f;file.txt');
+    var treeStr = new Tree('tree', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
     console.log(treeStr.tabTree);
-    document.getElementById('tree').innerHTML = Tree.draw(treeStr);
+    treeStr.draw();
+    treeStr.click(function() {});
+
+    //document.getElementById(treeStr.tabTree[0].path).onclick = function() {treeStr.test()};
 
     // Creating a Tree with a JSON
-    var treeJSON = new Tree('{ "dir" : [' +
+    var treeJSON = new Tree('tree2',
+    '{ "dir" : [' +
     '"test/", "test2/"],' +
     '"file" : [' +
     '"file.txt"] }');
     treeJSON.addNode('test2/', '{ "file" : ["test2/fileTest2.php"] }');
+    treeJSON.resetChildNode('test2/');
     console.log(treeJSON.tabTree);
-    treeJSON.resetSubdirNode('test2/');
-    console.log(treeJSON.tabTree);
+    treeJSON.draw();
 </script>
 
 </html>
