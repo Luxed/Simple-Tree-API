@@ -7,7 +7,7 @@ interface TreeNode {
     name: string;
     path: string;
     isDir: boolean;
-    subdir: TreeNode[];
+    child: TreeNode[];
 }
 
 interface CSSFakeButtons {
@@ -19,14 +19,16 @@ interface CSSFakeButtons {
 
 class Tree {
     private _tabTree: TreeNode[];
+    private _strDOMElement: string;
     static _css: CSSFakeButtons = {classNH: 'fakeButtonNH',
                                     classNHDir: 'fakeButtonNHDir',
                                     classH: 'fakeButtonH',
                                     classHDir: 'fakeButtonHDir'
     };
 
-    constructor(strTree: string) {
+    constructor(strDOMElement:string, strTree: string) {
         console.log('Creating a Tree');
+        this._strDOMElement = strDOMElement;
 
         this._tabTree = Tree.toTab(strTree);
     }
@@ -36,7 +38,7 @@ class Tree {
             name:strName,
             path:strPath,
             isDir:bDir,
-            subdir:tabSub
+            child:tabSub
         };
     }
 
@@ -117,7 +119,7 @@ class Tree {
                 break;
             }
             else if (strPath.indexOf(tabFind[i].path) > -1) {
-                objTree = this.findNode(strPath, tabFind[i].subdir);
+                objTree = this.findNode(strPath, tabFind[i].child);
             }
         }
 
@@ -126,12 +128,12 @@ class Tree {
 
     public addNode(strPath: string, strTree: string) {
         let node = this.findNode(strPath);
-        node.subdir = Tree.toTab(strTree);
+        node.child = Tree.toTab(strTree);
     }
 
-    public resetSubdirNode(strPath: string) {
+    public resetChildNode(strPath: string) {
         let node = this.findNode(strPath);
-        node.subdir = null;
+        node.child = null;
     }
 
     get tabTree(): TreeNode[] {
@@ -142,12 +144,12 @@ class Tree {
         Tree._css = objCSS;
     }
 
-    static draw(objTree: Tree, intDeep?: number, tabDrawTree?: TreeNode[]) {
+    public guiString(intDeep?: number, tabDrawTree?: TreeNode[]) {
         if (typeof intDeep === 'undefined') {
             intDeep = 0;
         }
         if (typeof tabDrawTree === 'undefined') {
-            tabDrawTree = objTree.tabTree;
+            tabDrawTree = this._tabTree;
         }
         let strTree = '';
 
@@ -158,22 +160,43 @@ class Tree {
                 strTree += '&nbsp&nbsp&nbsp';
             }
             if (tabDrawTree[i].isDir) {
-                if (tabDrawTree[i].subdir === null) {
+                if (tabDrawTree[i].child === null) {
                     strTree += '|';
                 } else {
                     strTree += '/';
                 }
-                strTree += '-<span id="'+tabDrawTree[i].path+'" class="'+Tree._css.classNHDir+'" onclick="ajax_ftpFileData(\''+tabDrawTree[i].path+'\')" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">'+tabDrawTree[i].name+'</span><br />';
+                strTree += '-<span id="'+tabDrawTree[i].path+'" class="'+Tree._css.classNHDir+'" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">'+tabDrawTree[i].name+'</span><br />';
 
-                if (tabDrawTree[i].subdir !== null) {
-                    strTree += this.draw(objTree, intDeep+1, tabDrawTree[i].subdir);
+                if (tabDrawTree[i].child !== null) {
+                    strTree += this.guiString(intDeep+1, tabDrawTree[i].child);
                 }
             } else {
-                strTree += '|-<span id="'+tabDrawTree[i].path+'" class="'+Tree._css.classNH+'" onclick="ajax_ftpFileData(\''+tabDrawTree[i].path+'\')" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">'+tabDrawTree[i].name+'</span><br />';
+                strTree += '|-<span id="'+tabDrawTree[i].path+'" class="'+Tree._css.classNH+'" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">'+tabDrawTree[i].name+'</span><br />';
             }
         }
 
         return strTree;
+    }
+
+    public draw() {
+        document.getElementById(this._strDOMElement).innerHTML = this.guiString();
+    }
+
+    public click(func: any, tabClick?: TreeNode[]) {
+        if (typeof func === 'function') {
+            if (typeof tabClick === 'undefined') {
+                tabClick = this._tabTree;
+            }
+            let i;
+            let l = tabClick.length;
+            for (i = 0; i < l; i++) {
+                if (tabClick[i].child === null) {
+                    document.getElementById(this._strDOMElement).onclick = func;
+                } else {
+                    this.click(func, tabClick[i].child);
+                }
+            }
+        }
     }
 
     static fakeBtnHovered(objBtn, inside) {
@@ -190,5 +213,9 @@ class Tree {
                 objBtn.className = Tree._css.classNHDir;
             }
         }
+    }
+
+    public test() {
+        console.log('what you did works');
     }
 }

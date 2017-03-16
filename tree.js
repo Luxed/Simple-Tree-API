@@ -3,8 +3,9 @@
  * 0.1
  */
 var Tree = (function () {
-    function Tree(strTree) {
+    function Tree(strDOMElement, strTree) {
         console.log('Creating a Tree');
+        this._strDOMElement = strDOMElement;
         this._tabTree = Tree.toTab(strTree);
     }
     Tree.createNode = function (strName, strPath, bDir, tabSub) {
@@ -12,7 +13,7 @@ var Tree = (function () {
             name: strName,
             path: strPath,
             isDir: bDir,
-            subdir: tabSub
+            child: tabSub
         };
     };
     Tree.toTab = function (strTree) {
@@ -84,18 +85,18 @@ var Tree = (function () {
                 break;
             }
             else if (strPath.indexOf(tabFind[i].path) > -1) {
-                objTree = this.findNode(strPath, tabFind[i].subdir);
+                objTree = this.findNode(strPath, tabFind[i].child);
             }
         }
         return objTree;
     };
     Tree.prototype.addNode = function (strPath, strTree) {
         var node = this.findNode(strPath);
-        node.subdir = Tree.toTab(strTree);
+        node.child = Tree.toTab(strTree);
     };
-    Tree.prototype.resetSubdirNode = function (strPath) {
+    Tree.prototype.resetChildNode = function (strPath) {
         var node = this.findNode(strPath);
-        node.subdir = null;
+        node.child = null;
     };
     Object.defineProperty(Tree.prototype, "tabTree", {
         get: function () {
@@ -111,12 +112,12 @@ var Tree = (function () {
         enumerable: true,
         configurable: true
     });
-    Tree.draw = function (objTree, intDeep, tabDrawTree) {
+    Tree.prototype.guiString = function (intDeep, tabDrawTree) {
         if (typeof intDeep === 'undefined') {
             intDeep = 0;
         }
         if (typeof tabDrawTree === 'undefined') {
-            tabDrawTree = objTree.tabTree;
+            tabDrawTree = this._tabTree;
         }
         var strTree = '';
         var i, x;
@@ -126,22 +127,42 @@ var Tree = (function () {
                 strTree += '&nbsp&nbsp&nbsp';
             }
             if (tabDrawTree[i].isDir) {
-                if (tabDrawTree[i].subdir === null) {
+                if (tabDrawTree[i].child === null) {
                     strTree += '|';
                 }
                 else {
                     strTree += '/';
                 }
-                strTree += '-<span id="' + tabDrawTree[i].path + '" class="' + Tree._css.classNHDir + '" onclick="ajax_ftpFileData(\'' + tabDrawTree[i].path + '\')" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
-                if (tabDrawTree[i].subdir !== null) {
-                    strTree += this.draw(objTree, intDeep + 1, tabDrawTree[i].subdir);
+                strTree += '-<span id="' + tabDrawTree[i].path + '" class="' + Tree._css.classNHDir + '" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
+                if (tabDrawTree[i].child !== null) {
+                    strTree += this.guiString(intDeep + 1, tabDrawTree[i].child);
                 }
             }
             else {
-                strTree += '|-<span id="' + tabDrawTree[i].path + '" class="' + Tree._css.classNH + '" onclick="ajax_ftpFileData(\'' + tabDrawTree[i].path + '\')" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
+                strTree += '|-<span id="' + tabDrawTree[i].path + '" class="' + Tree._css.classNH + '" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
             }
         }
         return strTree;
+    };
+    Tree.prototype.draw = function () {
+        document.getElementById(this._strDOMElement).innerHTML = this.guiString();
+    };
+    Tree.prototype.click = function (func, tabClick) {
+        if (typeof func === 'function') {
+            if (typeof tabClick === 'undefined') {
+                tabClick = this._tabTree;
+            }
+            var i = void 0;
+            var l = tabClick.length;
+            for (i = 0; i < l; i++) {
+                if (tabClick[i].child === null) {
+                    document.getElementById(this._strDOMElement).onclick = func;
+                }
+                else {
+                    this.click(func, tabClick[i].child);
+                }
+            }
+        }
     };
     Tree.fakeBtnHovered = function (objBtn, inside) {
         if (inside) {
@@ -160,6 +181,9 @@ var Tree = (function () {
                 objBtn.className = Tree._css.classNHDir;
             }
         }
+    };
+    Tree.prototype.test = function () {
+        console.log('what you did works');
     };
     Tree._css = { classNH: 'fakeButtonNH',
         classNHDir: 'fakeButtonNHDir',
