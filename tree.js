@@ -149,18 +149,22 @@ var Tree = (function () {
     };
     Tree.prototype.click = function (func, tabClick) {
         if (typeof func === 'function') {
+            console.log('click');
             if (typeof tabClick === 'undefined') {
                 tabClick = this._tabTree;
             }
             var i = void 0;
             var l = tabClick.length;
+            var _loop_1 = function() {
+                var str = tabClick[i].path;
+                if (tabClick[i].child !== null) {
+                    this_1.click(func, tabClick[i].child);
+                }
+                document.getElementById(tabClick[i].path).onclick = function () { func(str); };
+            };
+            var this_1 = this;
             for (i = 0; i < l; i++) {
-                if (tabClick[i].child === null) {
-                    document.getElementById(this._strDOMElement).onclick = func;
-                }
-                else {
-                    this.click(func, tabClick[i].child);
-                }
+                _loop_1();
             }
         }
     };
@@ -182,8 +186,8 @@ var Tree = (function () {
             }
         }
     };
-    Tree.prototype.test = function () {
-        console.log('what you did works');
+    Tree.prototype.test = function (str) {
+        console.log('what you did works ' + str);
     };
     Tree._css = { classNH: 'fakeButtonNH',
         classNHDir: 'fakeButtonNHDir',

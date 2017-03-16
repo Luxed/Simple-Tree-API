@@ -41,12 +41,12 @@
     treeStr.addNode('test/', 'f;test/fileTest.js');
     console.log(treeStr.tabTree);
     treeStr.draw();
-    treeStr.click(function() {});
+    treeStr.click(function (str) {console.log(str)});
 
     //document.getElementById(treeStr.tabTree[0].path).onclick = function() {treeStr.test()};
 
     // Creating a Tree with a JSON
-    var treeJSON = new Tree('tree2',
+    /*var treeJSON = new Tree('tree2',
     '{ "dir" : [' +
     '"test/", "test2/"],' +
     '"file" : [' +
@@ -54,7 +54,7 @@
     treeJSON.addNode('test2/', '{ "file" : ["test2/fileTest2.php"] }');
     treeJSON.resetChildNode('test2/');
     console.log(treeJSON.tabTree);
-    treeJSON.draw();
+    treeJSON.draw();*/
 </script>
 
 </html>
