@@ -1,3 +1,4 @@
+/// <reference path="TreeNode.ts" />
 namespace SimpleTree {
 
     interface CSSFakeButtons {
@@ -7,7 +8,7 @@ namespace SimpleTree {
         classHDir: string;
     }
 
-    class Tree {
+    export class Tree {
         private _tabTree: TreeNode[];
         private _strDOMElement: string;
         static _css: CSSFakeButtons = {
@@ -21,7 +22,7 @@ namespace SimpleTree {
             console.log('Creating a Tree');
             this._strDOMElement = strDOMElement;
 
-            this._tabTree = Tree.toTab(strTree);
+            this._tabTree = SimpleTree.Tree.toTab(strTree);
         }
 
         static createNode(strName, strPath, bDir, tabSub): TreeNode {
@@ -37,10 +38,10 @@ namespace SimpleTree {
             let tab: TreeNode[];
 
             try {
-                tab = Tree.JSONToTab(JSON.parse(strTree));
+                tab = SimpleTree.Tree.JSONToTab(JSON.parse(strTree));
             } catch (error) {
                 console.log('No JSON was given, assuming string');
-                tab = Tree.strToTab(strTree);
+                tab = SimpleTree.Tree.strToTab(strTree);
             }
 
             return tab;
@@ -59,9 +60,9 @@ namespace SimpleTree {
                 tabName = strPath.split('/');
                 if (tabTreeSplit[i].substr(0, 1) === 'd') {
                     //console.log(tabName[tabName.length-2]+'/');
-                    tab.push(Tree.createNode(tabName[tabName.length - 2] + '/', strPath, true, null));
+                    tab.push(SimpleTree.Tree.createNode(tabName[tabName.length - 2] + '/', strPath, true, null));
                 } else {
-                    tabFiles.push(Tree.createNode(tabName[tabName.length - 1], strPath, false, null));
+                    tabFiles.push(SimpleTree.Tree.createNode(tabName[tabName.length - 1], strPath, false, null));
                 }
             }
 
@@ -82,14 +83,14 @@ namespace SimpleTree {
             if (typeof objJSON.dir !== 'undefined') {
                 for (let str of objJSON.dir) {
                     tabName = str.split('/');
-                    tab.push(Tree.createNode(tabName[tabName.length - 2] + '/', str, true, null));
+                    tab.push(SimpleTree.Tree.createNode(tabName[tabName.length - 2] + '/', str, true, null));
                 }
             }
 
             if (typeof objJSON.file !== 'undefined') {
                 for (let str of objJSON.file) {
                     tabName = str.split('/');
-                    tab.push(Tree.createNode(tabName[tabName.length - 1], str, false, null));
+                    tab.push(SimpleTree.Tree.createNode(tabName[tabName.length - 1], str, false, null));
                 }
             }
 
@@ -119,7 +120,7 @@ namespace SimpleTree {
 
         public addNode(strPath: string, strTree: string) {
             let node = this.findNode(strPath);
-            node.childs = Tree.toTab(strTree);
+            node.childs = SimpleTree.Tree.toTab(strTree);
         }
 
         public resetChildNode(strPath: string) {
@@ -132,7 +133,7 @@ namespace SimpleTree {
         }
 
         static set css(objCSS: CSSFakeButtons) {
-            Tree._css = objCSS;
+            SimpleTree.Tree._css = objCSS;
         }
 
         public guiString(intDeep?: number, tabDrawTree?: TreeNode[]) {
@@ -156,13 +157,13 @@ namespace SimpleTree {
                     } else {
                         strTree += '/';
                     }
-                    strTree += '-<span id="' + tabDrawTree[i].path + '" class="' + Tree._css.classNHDir + '" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
+                    strTree += '-<span id="' + tabDrawTree[i].path + '" class="' + SimpleTree.Tree._css.classNHDir + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
 
                     if (tabDrawTree[i].childs !== null) {
                         strTree += this.guiString(intDeep + 1, tabDrawTree[i].childs);
                     }
                 } else {
-                    strTree += '|-<span id="' + tabDrawTree[i].path + '" class="' + Tree._css.classNH + '" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
+                    strTree += '|-<span id="' + tabDrawTree[i].path + '" class="' + SimpleTree.Tree._css.classNH + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
                 }
             }
 
@@ -194,16 +195,16 @@ namespace SimpleTree {
 
         static fakeBtnHovered(objBtn, inside) {
             if (inside) {
-                if (objBtn.className === Tree._css.classNH) {
-                    objBtn.className = Tree._css.classH;
+                if (objBtn.className === SimpleTree.Tree._css.classNH) {
+                    objBtn.className = SimpleTree.Tree._css.classH;
                 } else {
-                    objBtn.className = Tree._css.classHDir;
+                    objBtn.className = SimpleTree.Tree._css.classHDir;
                 }
             } else {
-                if (objBtn.className === Tree._css.classH) {
-                    objBtn.className = Tree._css.classNH;
+                if (objBtn.className === SimpleTree.Tree._css.classH) {
+                    objBtn.className = SimpleTree.Tree._css.classNH;
                 } else {
-                    objBtn.className = Tree._css.classNHDir;
+                    objBtn.className = SimpleTree.Tree._css.classNHDir;
                 }
             }
         }

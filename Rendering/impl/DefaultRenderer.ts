@@ -1,9 +1,11 @@
+/// <reference path="../../TreeNode.ts" />
+/// <reference path="../TreeRender.ts" />
 namespace SimpleTree.Rendering.impl {
-    class DefaultRenderer implements TreeRenderer {
+    export class DefaultRenderer implements TreeRenderer {
 
         public render(tree: TreeNode): String {
 
-            if (null == tree) throw new RangeError("Tree cannot be null");
+            if (null === tree) throw new RangeError("Tree cannot be null");
 
             let html: String = this.renderNode(0, tree);
 
@@ -24,7 +26,7 @@ namespace SimpleTree.Rendering.impl {
                 } else {
                     html += '/';
                 }
-                html += '-<span id="' + tree.path + '" class="'/* + Tree._css.classNHDir*/ + '" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
+                html += '-<span id="' + tree.path + '" class="'/* + Tree._css.classNHDir*/ + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
 
                 if (null != tree.childs && tree.childs.length > 0) {
                     for (let i: number = 0; i < tree.childs.length; ++i) {
@@ -36,7 +38,7 @@ namespace SimpleTree.Rendering.impl {
                 }
 
             } else {
-                html += '|-<span id="' + tree.path + '" class="'/* + Tree._css.classNH*/ + '" onmouseover="Tree.fakeBtnHovered(this, true)" onmouseout="Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
+                html += '|-<span id="' + tree.path + '" class="'/* + Tree._css.classNH*/ + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
             }
 
             return html;

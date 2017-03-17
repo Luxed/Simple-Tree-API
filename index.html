@@ -35,13 +35,19 @@
 </body>
 
 <script src="tree.js"></script>
+<script src="TreeNode.js"></script>
+<script src="Rendering/TreeRender.js"></script>
+<script src="Rendering/impl/DefaultRenderer.js"></script>
 <script>
     // Creating a Tree with a string
-    var treeStr = new Tree('tree', 'd;test/:d;test2/:f;file.txt');
+    var treeStr = new SimpleTree.Tree('tree', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
     console.log(treeStr.tabTree);
     treeStr.draw();
     treeStr.click(function (str) {console.log(str)});
+
+    var test = new SimpleTree.Rendering.impl.DefaultRenderer();
+    document.getElementById('tree2').innerHTML = test.render(treeStr.tabTree[0]);
 
     //document.getElementById(treeStr.tabTree[0].path).onclick = function() {treeStr.test()};
 
