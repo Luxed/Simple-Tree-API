@@ -30,6 +30,7 @@ namespace SimpleTree {
                 name: strName,
                 path: strPath,
                 isDir: bDir,
+                isOpen: false,
                 childs: tabSub
             };
         }

@@ -39,17 +39,25 @@
 <script src="Rendering/TreeRender.js"></script>
 <script src="Rendering/impl/DefaultRenderer.js"></script>
 <script>
+    function open(str) {
+        console.log(str);
+    }
+
     // Creating a Tree with a string
     var treeStr = new SimpleTree.Tree('tree', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
     console.log(treeStr.tabTree);
     treeStr.draw();
-    treeStr.click(function (str) {console.log(str)});
+    treeStr.click(open);
 
     var test = new SimpleTree.Rendering.impl.DefaultRenderer();
-    document.getElementById('tree2').innerHTML = test.render(treeStr.tabTree[0]);
-
-    //document.getElementById(treeStr.tabTree[0].path).onclick = function() {treeStr.test()};
+    document.getElementById('tree2').innerHTML = test.render({
+        name: 'root',
+        path: '/',
+        isDir: true,
+        isOpen: true,
+        childs: treeStr.tabTree
+    });
 
     // Creating a Tree with a JSON
     /*var treeJSON = new Tree('tree2',

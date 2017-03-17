@@ -1,4 +1,5 @@
 /// <reference path="../../TreeNode.ts" />
+/// <reference path="../../tree.ts" />
 /// <reference path="../TreeRender.ts" />
 var SimpleTree;
 (function (SimpleTree) {
@@ -16,19 +17,19 @@ var SimpleTree;
                     return html;
                 };
                 DefaultRenderer.prototype.renderNode = function (depth, tree) {
-                    var html;
+                    var html = '';
                     for (var i = 0; i < (depth * 3); ++i) {
                         html += "&nbsp";
                     }
-                    if (tree.isDir) {
+                    if (tree.isDir && tree.isOpen) {
                         if (tree.childs === null) {
                             html += '|';
                         }
                         else {
                             html += '/';
                         }
-                        html += '-<span id="' + tree.path + '" class="' /* + Tree._css.classNHDir*/ + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
-                        if (null != tree.childs && tree.childs.length > 0) {
+                        html += '-<span id="' + tree.path + '" class="' + SimpleTree.Tree._css.classNHDir + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
+                        if (null !== tree.childs && tree.childs.length > 0) {
                             for (var i = 0; i < tree.childs.length; ++i) {
                                 if (tree.childs !== null) {
                                     var childsToDraw = tree.childs[i];
@@ -38,7 +39,7 @@ var SimpleTree;
                         }
                     }
                     else {
-                        html += '|-<span id="' + tree.path + '" class="' /* + Tree._css.classNH*/ + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
+                        html += '|-<span id="' + tree.path + '" class="' + SimpleTree.Tree._css.classNH + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
                     }
                     return html;
                 };

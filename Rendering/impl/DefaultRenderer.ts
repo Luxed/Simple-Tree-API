@@ -1,4 +1,5 @@
 /// <reference path="../../TreeNode.ts" />
+/// <reference path="../../tree.ts" />
 /// <reference path="../TreeRender.ts" />
 namespace SimpleTree.Rendering.impl {
     export class DefaultRenderer implements TreeRenderer {
@@ -14,21 +15,21 @@ namespace SimpleTree.Rendering.impl {
 
         private renderNode(depth: number, tree: TreeNode): string {
 
-            let html: string;
+            let html: string = '';
 
             for (let i: number = 0; i < (depth * 3); ++i) {
                 html += "&nbsp";
             }
 
-            if (tree.isDir) {
+            if (tree.isDir && tree.isOpen) {
                 if (tree.childs === null) {
                     html += '|';
                 } else {
                     html += '/';
                 }
-                html += '-<span id="' + tree.path + '" class="'/* + Tree._css.classNHDir*/ + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
+                html += '-<span id="' + tree.path + '" class="' + SimpleTree.Tree._css.classNHDir + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
 
-                if (null != tree.childs && tree.childs.length > 0) {
+                if (null !== tree.childs && tree.childs.length > 0) {
                     for (let i: number = 0; i < tree.childs.length; ++i) {
                         if (tree.childs !== null) {
                             let childsToDraw : TreeNode = tree.childs[i];
@@ -38,7 +39,7 @@ namespace SimpleTree.Rendering.impl {
                 }
 
             } else {
-                html += '|-<span id="' + tree.path + '" class="'/* + Tree._css.classNH*/ + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
+                html += '|-<span id="' + tree.path + '" class="' + SimpleTree.Tree._css.classNH + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
             }
 
             return html;

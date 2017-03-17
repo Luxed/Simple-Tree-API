@@ -3,6 +3,7 @@ namespace SimpleTree {
         name: string;
         path: string;
         isDir: boolean;
+        isOpen: boolean;
         childs: TreeNode[];
     }
 }
