@@ -9,7 +9,7 @@ namespace SimpleTree {
     }
 
     export class Tree {
-        private _tabTree: TreeNode[];
+        private _rootNode: TreeNode;
         private _strDOMElement: string;
         static _css: CSSFakeButtons = {
             classNH: 'fakeButtonNH',
@@ -22,7 +22,7 @@ namespace SimpleTree {
             console.log('Creating a Tree');
             this._strDOMElement = strDOMElement;
 
-            this._tabTree = SimpleTree.Tree.toTab(strTree);
+            this._rootNode = SimpleTree.Tree.createNode('root', '/', true, SimpleTree.Tree.toTab(strTree));
         }
 
         static createNode(strName, strPath, bDir, tabSub): TreeNode {
@@ -99,21 +99,25 @@ namespace SimpleTree {
         }
 
         public findNode(strPath: string, tabFind?: TreeNode[]): TreeNode {
-            if (typeof tabFind === 'undefined') {
-                tabFind = this._tabTree;
-            }
             let objTree = null;
+            if (strPath !== this._rootNode.path) {
+                if (typeof tabFind === 'undefined') {
+                    tabFind = this._rootNode.childs;
+                }
 
-            let i;
-            let l = tabFind.length;
-            for (i = 0; i < l; i++) {
-                if (strPath === tabFind[i].path) {
-                    objTree = tabFind[i];
-                    break;
+                let i;
+                let l = tabFind.length;
+                for (i = 0; i < l; i++) {
+                    if (strPath === tabFind[i].path) {
+                        objTree = tabFind[i];
+                        break;
+                    }
+                    else if (strPath.indexOf(tabFind[i].path) > -1) {
+                        objTree = this.findNode(strPath, tabFind[i].childs);
+                    }
                 }
-                else if (strPath.indexOf(tabFind[i].path) > -1) {
-                    objTree = this.findNode(strPath, tabFind[i].childs);
-                }
+            } else {
+                objTree = this._rootNode;
             }
 
             return objTree;
@@ -129,57 +133,20 @@ namespace SimpleTree {
             node.childs = null;
         }
 
-        get tabTree(): TreeNode[] {
-            return this._tabTree;
+        get rootNode(): TreeNode {
+            return this._rootNode;
         }
 
-        static set css(objCSS: CSSFakeButtons) {
-            SimpleTree.Tree._css = objCSS;
-        }
-
-        public guiString(intDeep?: number, tabDrawTree?: TreeNode[]) {
-            if (typeof intDeep === 'undefined') {
-                intDeep = 0;
-            }
-            if (typeof tabDrawTree === 'undefined') {
-                tabDrawTree = this._tabTree;
-            }
-            let strTree = '';
-
-            let i, x;
-            let l = tabDrawTree.length;
-            for (i = 0; i < l; i++) {
-                for (x = 0; x < intDeep; x++) {
-                    strTree += '&nbsp&nbsp&nbsp';
-                }
-                if (tabDrawTree[i].isDir) {
-                    if (tabDrawTree[i].childs === null) {
-                        strTree += '|';
-                    } else {
-                        strTree += '/';
-                    }
-                    strTree += '-<span id="' + tabDrawTree[i].path + '" class="' + SimpleTree.Tree._css.classNHDir + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
-
-                    if (tabDrawTree[i].childs !== null) {
-                        strTree += this.guiString(intDeep + 1, tabDrawTree[i].childs);
-                    }
-                } else {
-                    strTree += '|-<span id="' + tabDrawTree[i].path + '" class="' + SimpleTree.Tree._css.classNH + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tabDrawTree[i].name + '</span><br />';
-                }
-            }
-
-            return strTree;
-        }
-
-        public draw() {
-            document.getElementById(this._strDOMElement).innerHTML = this.guiString();
+        public openDir(strPath: string) {
+            let node = this.findNode(strPath);
+            node.isOpen = true;
         }
 
         public click(func: any, tabClick?: TreeNode[]) {
             if (typeof func === 'function') {
                 console.log('click');
                 if (typeof tabClick === 'undefined') {
-                    tabClick = this._tabTree;
+                    tabClick = this._rootNode.childs;
                 }
 
                 let i;
@@ -192,6 +159,10 @@ namespace SimpleTree {
                     document.getElementById(tabClick[i].path).onclick = function () { func(str) };
                 }
             }
+        }
+
+        static set css(objCSS: CSSFakeButtons) {
+            SimpleTree.Tree._css = objCSS;
         }
 
         static fakeBtnHovered(objBtn, inside) {

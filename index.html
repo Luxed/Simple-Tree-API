@@ -46,18 +46,12 @@
     // Creating a Tree with a string
     var treeStr = new SimpleTree.Tree('tree', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
-    console.log(treeStr.tabTree);
-    treeStr.draw();
-    treeStr.click(open);
+    treeStr.openDir('/');
+    treeStr.openDir('test/');
+    console.log(treeStr.rootNode);
 
     var test = new SimpleTree.Rendering.impl.DefaultRenderer();
-    document.getElementById('tree2').innerHTML = test.render({
-        name: 'root',
-        path: '/',
-        isDir: true,
-        isOpen: true,
-        childs: treeStr.tabTree
-    });
+    document.getElementById('tree2').innerHTML = test.render(treeStr.rootNode);
 
     // Creating a Tree with a JSON
     /*var treeJSON = new Tree('tree2',
@@ -67,7 +61,7 @@
     '"file.txt"] }');
     treeJSON.addNode('test2/', '{ "file" : ["test2/fileTest2.php"] }');
     treeJSON.resetChildNode('test2/');
-    console.log(treeJSON.tabTree);
+    console.log(treeJSON.rootNode);
     treeJSON.draw();*/
 </script>
 
