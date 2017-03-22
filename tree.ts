@@ -10,7 +10,6 @@ namespace SimpleTree {
 
     export class Tree {
         private _rootNode: TreeNode;
-        private _strDOMElement: string;
         static _css: CSSFakeButtons = {
             classNH: 'fakeButtonNH',
             classNHDir: 'fakeButtonNHDir',
@@ -18,11 +17,13 @@ namespace SimpleTree {
             classHDir: 'fakeButtonHDir'
         };
 
-        constructor(strDOMElement: string, strTree: string) {
+        constructor(strTree?: string) {
             console.log('Creating a Tree');
-            this._strDOMElement = strDOMElement;
-
-            this._rootNode = SimpleTree.Tree.createNode('root', '/', true, SimpleTree.Tree.toTab(strTree));
+            if (typeof strTree !== 'undefined') {
+                this._rootNode = SimpleTree.Tree.createNode('root', '/', true, SimpleTree.Tree.toTab(strTree));
+            } else {
+                this._rootNode = SimpleTree.Tree.createNode('root', '/', true, null);
+            }
         }
 
         static createNode(strName, strPath, bDir, tabSub): TreeNode {
@@ -60,7 +61,6 @@ namespace SimpleTree {
                 strPath = tabTreeSplit[i].substr(2); // Removing the d; or f; information from the path
                 tabName = strPath.split('/');
                 if (tabTreeSplit[i].substr(0, 1) === 'd') {
-                    //console.log(tabName[tabName.length-2]+'/');
                     tab.push(SimpleTree.Tree.createNode(tabName[tabName.length - 2] + '/', strPath, true, null));
                 } else {
                     tabFiles.push(SimpleTree.Tree.createNode(tabName[tabName.length - 1], strPath, false, null));
@@ -70,7 +70,6 @@ namespace SimpleTree {
             let x;
             l = tabFiles.length;
             for (x = 0; x < l; x++) {
-                //console.log(tabFiles[x].name);
                 tab.push(tabFiles[x]);
             }
 
@@ -123,9 +122,13 @@ namespace SimpleTree {
             return objTree;
         }
 
-        public addNode(strPath: string, strTree: string) {
+        public addNode(strPath: string, strTree: string, open?: boolean) {
+            if (typeof open === 'undefined') {
+                open = false;
+            }
             let node = this.findNode(strPath);
             node.childs = SimpleTree.Tree.toTab(strTree);
+            node.isOpen = open;
         }
 
         public resetChildNode(strPath: string) {
@@ -133,30 +136,42 @@ namespace SimpleTree {
             node.childs = null;
         }
 
-        get rootNode(): TreeNode {
-            return this._rootNode;
-        }
-
         public openDir(strPath: string) {
             let node = this.findNode(strPath);
             node.isOpen = true;
+        }
+
+        public closeDir(strPath: string){
+            let node = this.findNode(strPath);
+            node.isOpen = false;
+        }
+
+        get rootNode(): TreeNode {
+            return this._rootNode;
         }
 
         public click(func: any, tabClick?: TreeNode[]) {
             if (typeof func === 'function') {
                 console.log('click');
                 if (typeof tabClick === 'undefined') {
+                    let str = this._rootNode.path;
+                    document.getElementById(str).onclick = function () { func(str) };
                     tabClick = this._rootNode.childs;
                 }
 
-                let i;
-                let l = tabClick.length;
-                for (i = 0; i < l; i++) {
-                    let str = tabClick[i].path;
-                    if (tabClick[i].childs !== null) {
-                        this.click(func, tabClick[i].childs);
+                if ((typeof tabClick !== 'undefined') && (typeof tabClick !== null) && this._rootNode.isOpen) {
+                    let i;
+                    let l = tabClick.length;
+                    for (i = 0; i < l; i++) {
+                        let str = tabClick[i].path;
+                        console.log(str);
+                        if (tabClick[i].childs !== null && tabClick[i].isOpen) {
+                            this.click(func, tabClick[i].childs);
+                        }
+                        document.getElementById(str).onclick = function () {
+                            func(str)
+                        };
                     }
-                    document.getElementById(tabClick[i].path).onclick = function () { func(str) };
                 }
             }
         }

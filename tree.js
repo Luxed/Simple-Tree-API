@@ -2,10 +2,14 @@
 var SimpleTree;
 (function (SimpleTree) {
     var Tree = (function () {
-        function Tree(strDOMElement, strTree) {
+        function Tree(strTree) {
             console.log('Creating a Tree');
-            this._strDOMElement = strDOMElement;
-            this._rootNode = SimpleTree.Tree.createNode('root', '/', true, SimpleTree.Tree.toTab(strTree));
+            if (typeof strTree !== 'undefined') {
+                this._rootNode = SimpleTree.Tree.createNode('root', '/', true, SimpleTree.Tree.toTab(strTree));
+            }
+            else {
+                this._rootNode = SimpleTree.Tree.createNode('root', '/', true, null);
+            }
         }
         Tree.createNode = function (strName, strPath, bDir, tabSub) {
             return {
@@ -38,7 +42,6 @@ var SimpleTree;
                 strPath = tabTreeSplit[i].substr(2); // Removing the d; or f; information from the path
                 tabName = strPath.split('/');
                 if (tabTreeSplit[i].substr(0, 1) === 'd') {
-                    //console.log(tabName[tabName.length-2]+'/');
                     tab.push(SimpleTree.Tree.createNode(tabName[tabName.length - 2] + '/', strPath, true, null));
                 }
                 else {
@@ -48,7 +51,6 @@ var SimpleTree;
             var x;
             l = tabFiles.length;
             for (x = 0; x < l; x++) {
-                //console.log(tabFiles[x].name);
                 tab.push(tabFiles[x]);
             }
             return tab;
@@ -95,13 +97,25 @@ var SimpleTree;
             }
             return objTree;
         };
-        Tree.prototype.addNode = function (strPath, strTree) {
+        Tree.prototype.addNode = function (strPath, strTree, open) {
+            if (typeof open === 'undefined') {
+                open = false;
+            }
             var node = this.findNode(strPath);
             node.childs = SimpleTree.Tree.toTab(strTree);
+            node.isOpen = open;
         };
         Tree.prototype.resetChildNode = function (strPath) {
             var node = this.findNode(strPath);
             node.childs = null;
+        };
+        Tree.prototype.openDir = function (strPath) {
+            var node = this.findNode(strPath);
+            node.isOpen = true;
+        };
+        Tree.prototype.closeDir = function (strPath) {
+            var node = this.findNode(strPath);
+            node.isOpen = false;
         };
         Object.defineProperty(Tree.prototype, "rootNode", {
             get: function () {
@@ -110,28 +124,31 @@ var SimpleTree;
             enumerable: true,
             configurable: true
         });
-        Tree.prototype.openDir = function (strPath) {
-            var node = this.findNode(strPath);
-            node.isOpen = true;
-        };
         Tree.prototype.click = function (func, tabClick) {
             if (typeof func === 'function') {
                 console.log('click');
                 if (typeof tabClick === 'undefined') {
+                    var str_1 = this._rootNode.path;
+                    document.getElementById(str_1).onclick = function () { func(str_1); };
                     tabClick = this._rootNode.childs;
                 }
-                var i = void 0;
-                var l = tabClick.length;
-                var _loop_1 = function() {
-                    var str = tabClick[i].path;
-                    if (tabClick[i].childs !== null) {
-                        this_1.click(func, tabClick[i].childs);
+                if ((typeof tabClick !== 'undefined') && (typeof tabClick !== null) && this._rootNode.isOpen) {
+                    var i = void 0;
+                    var l = tabClick.length;
+                    var _loop_1 = function() {
+                        var str = tabClick[i].path;
+                        console.log(str);
+                        if (tabClick[i].childs !== null && tabClick[i].isOpen) {
+                            this_1.click(func, tabClick[i].childs);
+                        }
+                        document.getElementById(str).onclick = function () {
+                            func(str);
+                        };
+                    };
+                    var this_1 = this;
+                    for (i = 0; i < l; i++) {
+                        _loop_1();
                     }
-                    document.getElementById(tabClick[i].path).onclick = function () { func(str); };
-                };
-                var this_1 = this;
-                for (i = 0; i < l; i++) {
-                    _loop_1();
                 }
             }
         };

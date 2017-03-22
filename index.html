@@ -41,17 +41,28 @@
 <script>
     function open(str) {
         console.log(str);
+        // Hardcode for testing purpose
+        if (str === '/' && !treeStr.rootNode.isOpen) {
+            treeStr.openDir('/');
+            document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
+            treeStr.click(open);
+        } else if (str === 'test/' && !treeStr.findNode('test/').isOpen) {
+            treeStr.openDir('test/');
+            document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
+            treeStr.click(open);
+        }
     }
 
     // Creating a Tree with a string
-    var treeStr = new SimpleTree.Tree('tree', 'd;test/:d;test2/:f;file.txt');
+    var treeStr = new SimpleTree.Tree();
+    treeStr.addNode('/', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
-    treeStr.openDir('/');
-    treeStr.openDir('test/');
     console.log(treeStr.rootNode);
+    //treeStr.click(open);
 
     var test = new SimpleTree.Rendering.impl.DefaultRenderer();
-    document.getElementById('tree2').innerHTML = test.render(treeStr.rootNode);
+    document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
+    treeStr.click(open);
 
     // Creating a Tree with a JSON
     /*var treeJSON = new Tree('tree2',
