@@ -34,10 +34,7 @@
 <div id="tree2"></div>
 </body>
 
-<script src="tree.js"></script>
-<script src="TreeNode.js"></script>
-<script src="Rendering/TreeRender.js"></script>
-<script src="Rendering/impl/DefaultRenderer.js"></script>
+<script src="Tree.js"></script>
 <script>
     function open(str) {
         console.log(str);
@@ -60,7 +57,7 @@
     console.log(treeStr.rootNode);
     //treeStr.click(open);
 
-    var test = new SimpleTree.Rendering.impl.DefaultRenderer();
+    var test = new SimpleTree.Rendering.DefaultRenderer();
     document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
     treeStr.click(open);
 

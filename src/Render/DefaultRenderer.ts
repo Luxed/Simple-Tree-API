@@ -1,7 +1,7 @@
-/// <reference path="../../TreeNode.ts" />
-/// <reference path="../../tree.ts" />
-/// <reference path="../TreeRender.ts" />
-namespace SimpleTree.Rendering.impl {
+/// <reference path="../TreeNode.ts" />
+/// <reference path="../Tree.ts" />
+/// <reference path="./TreeRender.ts" />
+namespace SimpleTree.Rendering {
     export class DefaultRenderer implements TreeRenderer {
 
         public render(tree: TreeNode): String {
