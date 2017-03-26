@@ -41,12 +41,10 @@
         // Hardcode for testing purpose
         if (str === '/' && !treeStr.rootNode.isOpen) {
             treeStr.openDir('/');
-            document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
-            treeStr.click(open);
         } else if (str === 'test/' && !treeStr.findNode('test/').isOpen) {
             treeStr.openDir('test/');
-            document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
-            treeStr.click(open);
+        } else if (str === 'test2/' && !treeStr.findNode('test2/').isOpen) {
+            treeStr.openDir('test2/');
         }
     }
 
@@ -54,12 +52,11 @@
     var treeStr = new SimpleTree.Tree();
     treeStr.addNode('/', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
+    treeStr.addNode('test2/', 'd;test2/haha/:f;test2/fileTest2.js');
     console.log(treeStr.rootNode);
-    //treeStr.click(open);
 
-    var test = new SimpleTree.Rendering.DefaultRenderer();
-    document.getElementById('tree').innerHTML = test.render(treeStr.rootNode);
-    treeStr.click(open);
+    var render = new SimpleTree.Rendering.DefaultRenderer();
+    treeStr.autoDraw('tree', render, open);
 
     // Creating a Tree with a JSON
     /*var treeJSON = new Tree('tree2',

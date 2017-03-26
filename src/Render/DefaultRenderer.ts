@@ -4,11 +4,11 @@
 namespace SimpleTree.Rendering {
     export class DefaultRenderer implements TreeRenderer {
 
-        public render(tree: TreeNode): String {
+        public render(tree: TreeNode): string {
 
             if (null === tree) throw new RangeError("Tree cannot be null");
 
-            let html: String = this.renderNode(0, tree);
+            let html: string = this.renderNode(0, tree);
 
             return html;
         }

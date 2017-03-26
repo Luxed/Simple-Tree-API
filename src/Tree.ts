@@ -1,6 +1,7 @@
 /// <reference path="./TreeNode.ts" />
 namespace SimpleTree {
 
+    import TreeRenderer = SimpleTree.Rendering.TreeRenderer;
     interface CSSFakeButtons {
         classNH: string;
         classNHDir: string;
@@ -10,6 +11,10 @@ namespace SimpleTree {
 
     export class Tree {
         private _rootNode: TreeNode;
+        private _DOMElement: string = null;
+        private _clickFunction = null;
+        private _renderer: TreeRenderer = null;
+        private _autoDraw: boolean = false;
         static _css: CSSFakeButtons = {
             classNH: 'fakeButtonNH',
             classNHDir: 'fakeButtonNHDir',
@@ -139,6 +144,8 @@ namespace SimpleTree {
         public openDir(strPath: string) {
             let node = this.findNode(strPath);
             node.isOpen = true;
+
+            this.redraw();
         }
 
         public closeDir(strPath: string){
@@ -172,6 +179,23 @@ namespace SimpleTree {
                             func(str)
                         };
                     }
+                }
+            }
+        }
+
+        public autoDraw(DOMElement: string, renderer: TreeRenderer, func) {
+            this._DOMElement = DOMElement;
+            this._clickFunction = func;
+            this._renderer = renderer;
+            this._autoDraw = true;
+            this.redraw();
+        }
+
+        private redraw() {
+            if (this._autoDraw) {
+                if (this._DOMElement !== null && this._clickFunction !== null) {
+                    document.getElementById(this._DOMElement).innerHTML = this._renderer.render(this._rootNode);
+                    this.click(this._clickFunction);
                 }
             }
         }

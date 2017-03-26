@@ -2,6 +2,10 @@ var SimpleTree;
 (function (SimpleTree) {
     var Tree = (function () {
         function Tree(strTree) {
+            this._DOMElement = null;
+            this._clickFunction = null;
+            this._renderer = null;
+            this._autoDraw = false;
             console.log('Creating a Tree');
             if (typeof strTree !== 'undefined') {
                 this._rootNode = SimpleTree.Tree.createNode('root', '/', true, SimpleTree.Tree.toTab(strTree));
@@ -111,6 +115,7 @@ var SimpleTree;
         Tree.prototype.openDir = function (strPath) {
             var node = this.findNode(strPath);
             node.isOpen = true;
+            this.redraw();
         };
         Tree.prototype.closeDir = function (strPath) {
             var node = this.findNode(strPath);
@@ -148,6 +153,21 @@ var SimpleTree;
                     for (i = 0; i < l; i++) {
                         _loop_1();
                     }
+                }
+            }
+        };
+        Tree.prototype.autoDraw = function (DOMElement, renderer, func) {
+            this._DOMElement = DOMElement;
+            this._clickFunction = func;
+            this._renderer = renderer;
+            this._autoDraw = true;
+            this.redraw();
+        };
+        Tree.prototype.redraw = function () {
+            if (this._autoDraw) {
+                if (this._DOMElement !== null && this._clickFunction !== null) {
+                    document.getElementById(this._DOMElement).innerHTML = this._renderer.render(this._rootNode);
+                    this.click(this._clickFunction);
                 }
             }
         };
