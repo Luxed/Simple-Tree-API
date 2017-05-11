@@ -22,17 +22,17 @@ namespace SimpleTree.Rendering {
             }
 
             if (tree.isDir && tree.isOpen) {
-                if (tree.childs === null) {
+                if (tree.child === null) {
                     html += '|';
                 } else {
                     html += '/';
                 }
                 html += '-<span id="' + tree.path + '" class="' + SimpleTree.Tree._css.classNHDir + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
 
-                if (null !== tree.childs && tree.childs.length > 0) {
-                    for (let i: number = 0; i < tree.childs.length; ++i) {
-                        if (tree.childs !== null) {
-                            let childsToDraw : TreeNode = tree.childs[i];
+                if (null !== tree.child && tree.child.length > 0) {
+                    for (let i: number = 0; i < tree.child.length; ++i) {
+                        if (tree.child !== null) {
+                            let childsToDraw : TreeNode = tree.child[i];
                             html = html.concat(this.renderNode(depth + 1, childsToDraw));
                         }
                     }
@@ -48,8 +48,8 @@ namespace SimpleTree.Rendering {
         private getDepth(tree: TreeNode): number {
 
             let depths = Array<number>();
-            for (let i = 0; i < tree.childs.length; ++i) {
-                let subNode: TreeNode = tree.childs[i];
+            for (let i = 0; i < tree.child.length; ++i) {
+                let subNode: TreeNode = tree.child[i];
                 depths.push(
                     this.getDepth(subNode)
                 );

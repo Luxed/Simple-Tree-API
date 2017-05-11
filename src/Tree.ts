@@ -37,7 +37,7 @@ namespace SimpleTree {
                 path: strPath,
                 isDir: bDir,
                 isOpen: false,
-                childs: tabSub
+                child: tabSub
             };
         }
 
@@ -106,7 +106,7 @@ namespace SimpleTree {
             let objTree = null;
             if (strPath !== this._rootNode.path) {
                 if (typeof tabFind === 'undefined') {
-                    tabFind = this._rootNode.childs;
+                    tabFind = this._rootNode.child;
                 }
 
                 let i;
@@ -117,7 +117,7 @@ namespace SimpleTree {
                         break;
                     }
                     else if (strPath.indexOf(tabFind[i].path) > -1) {
-                        objTree = this.findNode(strPath, tabFind[i].childs);
+                        objTree = this.findNode(strPath, tabFind[i].child);
                     }
                 }
             } else {
@@ -132,13 +132,13 @@ namespace SimpleTree {
                 open = false;
             }
             let node = this.findNode(strPath);
-            node.childs = SimpleTree.Tree.toTab(strTree);
+            node.child = SimpleTree.Tree.toTab(strTree);
             node.isOpen = open;
         }
 
         public resetChildNode(strPath: string) {
             let node = this.findNode(strPath);
-            node.childs = null;
+            node.child = null;
         }
 
         public openDir(strPath: string) {
@@ -148,9 +148,18 @@ namespace SimpleTree {
             this.redraw();
         }
 
-        public closeDir(strPath: string){
+        public closeDir(strPath: string) {
             let node = this.findNode(strPath);
             node.isOpen = false;
+
+            this.redraw();
+        }
+
+        public ocDir(strPath: string)  {
+            let node = this.findNode(strPath);
+            node.isOpen = !node.isOpen;
+
+            this.redraw();
         }
 
         get rootNode(): TreeNode {
@@ -159,11 +168,11 @@ namespace SimpleTree {
 
         public click(func: any, tabClick?: TreeNode[]) {
             if (typeof func === 'function') {
-                console.log('click');
+                //console.log('click');
                 if (typeof tabClick === 'undefined') {
                     let str = this._rootNode.path;
                     document.getElementById(str).onclick = function () { func(str) };
-                    tabClick = this._rootNode.childs;
+                    tabClick = this._rootNode.child;
                 }
 
                 if ((typeof tabClick !== 'undefined') && (typeof tabClick !== null) && this._rootNode.isOpen) {
@@ -171,9 +180,9 @@ namespace SimpleTree {
                     let l = tabClick.length;
                     for (i = 0; i < l; i++) {
                         let str = tabClick[i].path;
-                        console.log(str);
-                        if (tabClick[i].childs !== null && tabClick[i].isOpen) {
-                            this.click(func, tabClick[i].childs);
+                        //console.log(str);
+                        if (tabClick[i].child !== null && tabClick[i].isOpen) {
+                            this.click(func, tabClick[i].child);
                         }
                         document.getElementById(str).onclick = function () {
                             func(str)
@@ -218,10 +227,6 @@ namespace SimpleTree {
                     objBtn.className = SimpleTree.Tree._css.classNHDir;
                 }
             }
-        }
-
-        public test(str) {
-            console.log('what you did works ' + str);
         }
     }
 }

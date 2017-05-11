@@ -20,7 +20,7 @@ var SimpleTree;
                 path: strPath,
                 isDir: bDir,
                 isOpen: false,
-                childs: tabSub
+                child: tabSub
             };
         };
         Tree.toTab = function (strTree) {
@@ -81,7 +81,7 @@ var SimpleTree;
             var objTree = null;
             if (strPath !== this._rootNode.path) {
                 if (typeof tabFind === 'undefined') {
-                    tabFind = this._rootNode.childs;
+                    tabFind = this._rootNode.child;
                 }
                 var i = void 0;
                 var l = tabFind.length;
@@ -91,7 +91,7 @@ var SimpleTree;
                         break;
                     }
                     else if (strPath.indexOf(tabFind[i].path) > -1) {
-                        objTree = this.findNode(strPath, tabFind[i].childs);
+                        objTree = this.findNode(strPath, tabFind[i].child);
                     }
                 }
             }
@@ -105,12 +105,12 @@ var SimpleTree;
                 open = false;
             }
             var node = this.findNode(strPath);
-            node.childs = SimpleTree.Tree.toTab(strTree);
+            node.child = SimpleTree.Tree.toTab(strTree);
             node.isOpen = open;
         };
         Tree.prototype.resetChildNode = function (strPath) {
             var node = this.findNode(strPath);
-            node.childs = null;
+            node.child = null;
         };
         Tree.prototype.openDir = function (strPath) {
             var node = this.findNode(strPath);
@@ -120,6 +120,12 @@ var SimpleTree;
         Tree.prototype.closeDir = function (strPath) {
             var node = this.findNode(strPath);
             node.isOpen = false;
+            this.redraw();
+        };
+        Tree.prototype.ocDir = function (strPath) {
+            var node = this.findNode(strPath);
+            node.isOpen = !node.isOpen;
+            this.redraw();
         };
         Object.defineProperty(Tree.prototype, "rootNode", {
             get: function () {
@@ -130,20 +136,18 @@ var SimpleTree;
         });
         Tree.prototype.click = function (func, tabClick) {
             if (typeof func === 'function') {
-                console.log('click');
                 if (typeof tabClick === 'undefined') {
                     var str_1 = this._rootNode.path;
                     document.getElementById(str_1).onclick = function () { func(str_1); };
-                    tabClick = this._rootNode.childs;
+                    tabClick = this._rootNode.child;
                 }
                 if ((typeof tabClick !== 'undefined') && (typeof tabClick !== null) && this._rootNode.isOpen) {
                     var i = void 0;
                     var l = tabClick.length;
                     var _loop_1 = function () {
                         var str = tabClick[i].path;
-                        console.log(str);
-                        if (tabClick[i].childs !== null && tabClick[i].isOpen) {
-                            this_1.click(func, tabClick[i].childs);
+                        if (tabClick[i].child !== null && tabClick[i].isOpen) {
+                            this_1.click(func, tabClick[i].child);
                         }
                         document.getElementById(str).onclick = function () {
                             func(str);
@@ -196,9 +200,6 @@ var SimpleTree;
                 }
             }
         };
-        Tree.prototype.test = function (str) {
-            console.log('what you did works ' + str);
-        };
         return Tree;
     }());
     Tree._css = {
@@ -228,17 +229,17 @@ var SimpleTree;
                     html += "&nbsp";
                 }
                 if (tree.isDir && tree.isOpen) {
-                    if (tree.childs === null) {
+                    if (tree.child === null) {
                         html += '|';
                     }
                     else {
                         html += '/';
                     }
                     html += '-<span id="' + tree.path + '" class="' + SimpleTree.Tree._css.classNHDir + '" onmouseover="SimpleTree.Tree.fakeBtnHovered(this, true)" onmouseout="SimpleTree.Tree.fakeBtnHovered(this, false)">' + tree.name + '</span><br />';
-                    if (null !== tree.childs && tree.childs.length > 0) {
-                        for (var i = 0; i < tree.childs.length; ++i) {
-                            if (tree.childs !== null) {
-                                var childsToDraw = tree.childs[i];
+                    if (null !== tree.child && tree.child.length > 0) {
+                        for (var i = 0; i < tree.child.length; ++i) {
+                            if (tree.child !== null) {
+                                var childsToDraw = tree.child[i];
                                 html = html.concat(this.renderNode(depth + 1, childsToDraw));
                             }
                         }
@@ -251,8 +252,8 @@ var SimpleTree;
             };
             DefaultRenderer.prototype.getDepth = function (tree) {
                 var depths = Array();
-                for (var i = 0; i < tree.childs.length; ++i) {
-                    var subNode = tree.childs[i];
+                for (var i = 0; i < tree.child.length; ++i) {
+                    var subNode = tree.child[i];
                     depths.push(this.getDepth(subNode));
                 }
                 return this.max(depths);

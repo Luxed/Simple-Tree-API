@@ -37,15 +37,9 @@
 <script src="Tree.js"></script>
 <script>
     function open(str) {
-        console.log(str);
+        //console.log(str);
         // Hardcode for testing purpose
-        if (str === '/' && !treeStr.rootNode.isOpen) {
-            treeStr.openDir('/');
-        } else if (str === 'test/' && !treeStr.findNode('test/').isOpen) {
-            treeStr.openDir('test/');
-        } else if (str === 'test2/' && !treeStr.findNode('test2/').isOpen) {
-            treeStr.openDir('test2/');
-        }
+        treeStr.ocDir(str);
     }
 
     // Creating a Tree with a string
@@ -53,7 +47,7 @@
     treeStr.addNode('/', 'd;test/:d;test2/:f;file.txt');
     treeStr.addNode('test/', 'f;test/fileTest.js');
     treeStr.addNode('test2/', 'd;test2/haha/:f;test2/fileTest2.js');
-    console.log(treeStr.rootNode);
+    //console.log(treeStr.rootNode);
 
     var render = new SimpleTree.Rendering.DefaultRenderer();
     treeStr.autoDraw('tree', render, open);

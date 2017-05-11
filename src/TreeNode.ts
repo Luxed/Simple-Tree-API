@@ -4,6 +4,6 @@ namespace SimpleTree {
         path: string;
         isDir: boolean;
         isOpen: boolean;
-        childs: TreeNode[];
+        child: TreeNode[];
     }
 }
