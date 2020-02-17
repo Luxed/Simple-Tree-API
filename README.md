@@ -1,3 +1,3 @@
 # Simple-Tree-JS
 
-Simple tree
+Simple tree (javascript library)
