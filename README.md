@@ -1,1 +1,3 @@
-# Simple-Tree-API
+# Simple-Tree-JS
+
+Simple tree
